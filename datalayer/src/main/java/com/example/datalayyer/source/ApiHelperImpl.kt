@@ -6,11 +6,7 @@ import javax.inject.Inject
 
 
 class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : ApiHelper {
-    override suspend fun getAllResponse(
-        orgname: String?,
-        repoName: String?,
-        state: String?
-    ): Response<UiResponse> {
+    override suspend fun getAllResponse(): Response<UiResponse> {
 
         return apiService.getAllResponse();
 
