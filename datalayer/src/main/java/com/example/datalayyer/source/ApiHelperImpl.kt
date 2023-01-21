@@ -6,9 +6,9 @@ import javax.inject.Inject
 
 
 class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : ApiHelper {
-    override suspend fun getAllResponse(): Response<UiResponse> {
+    override suspend fun fetchCustomUI(): Response<UiResponse> {
 
-        return apiService.getAllResponse();
+        return apiService.fetchCustomUI();
 
     }
 

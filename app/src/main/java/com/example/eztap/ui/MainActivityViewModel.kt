@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.datalayyer.model.Status
 import com.example.datalayyer.model.Uidata
 import com.example.datalayyer.repos.RemoteDataSource
 import com.example.eztap.utils.NetworkHelper
@@ -14,7 +15,9 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(val prRepository: RemoteDataSource, val networkHelper: NetworkHelper) : ViewModel()
+class MainActivityViewModel @Inject constructor(
+    val prRepository: RemoteDataSource,
+                                                val networkHelper: NetworkHelper) : ViewModel()
 {
 
     private val _dataLoading = MutableLiveData<Boolean>(false)
@@ -23,9 +26,7 @@ class MainActivityViewModel @Inject constructor(val prRepository: RemoteDataSour
     private val _isDataLoadingError = MutableLiveData<Pair<Boolean,String>>(Pair(false,""))
     val isDataLoadingError: LiveData<Pair<Boolean, String>> = _isDataLoadingError
 
-
     private val _data = MutableLiveData<List<Uidata>>()
-
     val data: LiveData<List<Uidata>>
         get() = _data
 
@@ -37,16 +38,18 @@ class MainActivityViewModel @Inject constructor(val prRepository: RemoteDataSour
 
         viewModelScope.launch {
 
+            _dataLoading.value = true;
+
             if (networkHelper.isNetworkConnected()) {
 
-                _dataLoading.value = true;
-                prRepository.getAllResponse().let {
+                prRepository.fetchCustomUI().let {res->
+
                     _dataLoading.value  = false;
 
-                    if (it.isSuccessful) {
+                    if (res.status == Status.SUCCESS) {
 
                         _isDataLoadingError.value = Pair(false,"")
-                        _data.postValue(it.body()?.uidata)
+                        _data.postValue(res.data?.uidata)
 
                     } else {
 
@@ -59,6 +62,7 @@ class MainActivityViewModel @Inject constructor(val prRepository: RemoteDataSour
             }
             else {
 
+                _dataLoading.value = false;
                 _isDataLoadingError.value = Pair(true,"Slow Internet")
 
             }

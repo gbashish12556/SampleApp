@@ -3,6 +3,7 @@ package com.example.eztap.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,14 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.activityViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var viewModel: MainActivityViewModel
+    private val viewModel: MainActivityViewModel by viewModels();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
         ) {
 
             items(uiDataList.value!!) { data ->
-               ListItem(itemData = data)
+                CustomItem(itemData = data)
             }
 
             item {
@@ -100,7 +101,7 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun ListItem(itemData:Uidata){
+    fun CustomItem(itemData:Uidata){
 
         var input by remember { mutableStateOf("") }
 
@@ -141,30 +142,15 @@ class MainActivity : ComponentActivity() {
             "button"->{
 
                 Button(
-                    // below line is use to add onclick
-                    // parameter for our button onclick
                     onClick = {
                         //Navigate to next scree
                     },
-                    // in below line we are using modifier
-                    // which is use to add padding to our button
                     modifier = Modifier.padding(all = 10.dp),
-
-                    // below line is use to set or
-                    // button as enable or disable.
                     enabled = true,
-
-
-                    // below line is use to
-                    // add border to our button.
                     border = BorderStroke(width = 1.dp, brush = SolidColor(Color.Blue)),
-
-                    // below line is use to add shape for our button.
                     shape = MaterialTheme.shapes.medium,
 
                 )
-                // below line is use to
-                // add text on our button
                 {
                     Text(text = itemData.value!!, color = Color.White, style = textStyle)
                 }

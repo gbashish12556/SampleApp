@@ -9,5 +9,5 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("/mobileapps/android_assignment.json")
-    suspend fun getAllResponse(): Response<UiResponse>
+    suspend fun fetchCustomUI(): Response<UiResponse>
 }

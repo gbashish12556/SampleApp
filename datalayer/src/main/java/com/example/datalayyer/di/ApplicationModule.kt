@@ -1,7 +1,10 @@
 package com.example.datalayyer.di
 
 import android.content.Context
+import com.example.datalayyer.BuildConfig
 import com.example.datalayyer.Constants
+import com.example.datalayyer.repos.RemoteDataSource
+import com.example.datalayyer.repos.RemoteResponseImpl
 import com.example.datalayyer.source.ApiHelper
 import com.example.datalayyer.source.ApiHelperImpl
 import com.example.datalayyer.source.ApiService
@@ -54,6 +57,12 @@ class ApplicationModule {
     @Singleton
     fun provideApiHelper(apiService: ApiService): ApiHelper {
         return ApiHelperImpl(apiService);
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(apiHelper: ApiHelper): RemoteDataSource {
+        return RemoteResponseImpl(apiHelper);
     }
 
 
