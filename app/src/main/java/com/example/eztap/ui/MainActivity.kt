@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.activityViewModels
+import com.example.datalayyer.model.UiResponse
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -62,8 +63,10 @@ class MainActivity : ComponentActivity() {
 
         ) {
 
-            items(uiDataList.value!!) { data ->
-                CustomItem(itemData = data)
+            uiDataList.value?.let {listData->
+                items(listData) { data ->
+                    CustomItem(itemData = data)
+                }
             }
 
             item {
@@ -74,7 +77,9 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
-                            modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center),
                             text = errorState.value!!.second
                         )
                     }
@@ -87,7 +92,9 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
-                            modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center),
                             text = "Loading...."
                         )
                     }
@@ -112,7 +119,6 @@ class MainActivity : ComponentActivity() {
             fontWeight = FontWeight.W800,
             fontStyle = FontStyle.Normal,
             letterSpacing = 0.5.em,
-            background = Color.LightGray,
         )
 
         when(itemData.uitype){
@@ -120,7 +126,9 @@ class MainActivity : ComponentActivity() {
             "label"->{
 
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 5.dp),
                     text = itemData.value!!,
                     style = textStyle
                 )
@@ -140,19 +148,23 @@ class MainActivity : ComponentActivity() {
 
             }
             "button"->{
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = {
+                            //Navigate to next scree
+                        },
+                        modifier = Modifier.padding(all = 10.dp),
+                        enabled = true,
+                        border = BorderStroke(width = 1.dp, brush = SolidColor(Color.Blue)),
+                        shape = MaterialTheme.shapes.medium,
 
-                Button(
-                    onClick = {
-                        //Navigate to next scree
-                    },
-                    modifier = Modifier.padding(all = 10.dp),
-                    enabled = true,
-                    border = BorderStroke(width = 1.dp, brush = SolidColor(Color.Blue)),
-                    shape = MaterialTheme.shapes.medium,
-
-                )
-                {
-                    Text(text = itemData.value!!, color = Color.White, style = textStyle)
+                        )
+                    {
+                        Text(text = itemData.value!!, color = Color.White, style = textStyle)
+                    }
                 }
 
             }

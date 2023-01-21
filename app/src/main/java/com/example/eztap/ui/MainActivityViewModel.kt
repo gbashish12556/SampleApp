@@ -15,8 +15,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
-    val prRepository: RemoteDataSource,
+class MainActivityViewModel @Inject constructor(val prRepository: RemoteDataSource,
                                                 val networkHelper: NetworkHelper) : ViewModel()
 {
 
