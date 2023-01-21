@@ -14,6 +14,7 @@ data class Uidata (
 
     @SerializedName("uitype" ) var uitype : String? = null,
     @SerializedName("value"  ) var value  : String? = null,
-    @SerializedName("key"    ) var key    : String? = null
+    @SerializedName("key"    ) var key    : String? = null,
+    @SerializedName("hint"    ) var hint    : String? = null
 
 ):java.io.Serializable
