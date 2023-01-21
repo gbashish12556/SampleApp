@@ -33,7 +33,7 @@ class MainActivityViewModel @Inject constructor(val prRepository: RemoteDataSour
         fetchData()
     }
 
-    fun fetchData() {
+    private fun fetchData() {
 
         viewModelScope.launch {
 

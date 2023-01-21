@@ -71,7 +71,9 @@ class MainActivity : ComponentActivity() {
                 CircularProgressIndicator(
                     // below line is use to add padding
                     // to our progress bar.
-                    modifier = Modifier.padding(16.dp).align(Alignment.Center),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center),
 
                     // below line is use to add color
                     // to our progress bar.
@@ -121,49 +123,70 @@ class MainActivity : ComponentActivity() {
 
             "label"->{
 
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 5.dp),
-                    text = itemData.value!!,
-                    style = textStyle
-                )
+                CustomTextLabel(itemData = itemData, textStyle=textStyle)
 
             }
             "edittext"->{
 
-                TextField(
-                    value = input,
-                    modifier = Modifier.fillMaxWidth(),
-                    onValueChange = { input = it },
-                    placeholder = {
-                        Text(itemData.hint!!)
-                    },
-
-                )
+                CustomTextField(itemData = itemData)
 
             }
             "button"->{
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Button(
-                        onClick = {
-                            //Navigate to next scree
-                        },
-                        modifier = Modifier.padding(all = 10.dp),
-                        enabled = true,
-                        border = BorderStroke(width = 1.dp, brush = SolidColor(Color.Blue)),
-                        shape = MaterialTheme.shapes.medium,
 
-                        )
-                    {
-                        Text(text = itemData.value!!, color = Color.White, style = textStyle)
-                    }
-                }
+                CustomButton(itemData = itemData, textStyle = textStyle)
 
             }
         }
+    }
+
+    @Composable
+    fun CustomTextLabel(itemData: Uidata, textStyle: TextStyle) {
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 5.dp),
+            text = itemData.value!!,
+            style = textStyle
+        )
+
+    }
+
+    @Composable
+    fun CustomTextField(itemData:Uidata){
+
+        var input by remember { mutableStateOf("") }
+        TextField(
+            value = input,
+            modifier = Modifier.fillMaxWidth(),
+            onValueChange = { input = it },
+            placeholder = {
+                Text(itemData.hint!!)
+            },
+        )
+    }
+
+    @Composable
+    fun CustomButton(itemData:Uidata, textStyle: TextStyle){
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {
+                    //Navigate to next scree
+                },
+                modifier = Modifier.padding(all = 10.dp),
+                enabled = true,
+                border = BorderStroke(width = 1.dp, brush = SolidColor(Color.Blue)),
+                shape = MaterialTheme.shapes.medium,
+
+                )
+            {
+                Text(text = itemData.value!!, color = Color.White, style = textStyle)
+            }
+        }
+
     }
 }
