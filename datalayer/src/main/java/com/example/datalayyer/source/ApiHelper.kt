@@ -5,10 +5,6 @@ import retrofit2.Response
 
 interface ApiHelper {
 
-    suspend fun getAllResponse(
-        orgname: String?,
-        repoName: String?,
-        state: String?
-    ): Response<UiResponse>
+    suspend fun getAllResponse(): Response<UiResponse>
 
 }

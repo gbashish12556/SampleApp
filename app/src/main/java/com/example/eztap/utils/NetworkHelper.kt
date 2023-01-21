@@ -1,4 +1,4 @@
-package com.example.datalayyer.utils
+package com.example.eztap.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
