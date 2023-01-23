@@ -22,7 +22,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainActivityViewModel by viewModels();
+    val viewModel: MainActivityViewModel by viewModels();
+
     lateinit var linearLayout:LinearLayout
 
     @SuppressLint("WrongViewCast")
@@ -31,24 +32,14 @@ class MainActivity : ComponentActivity() {
 
         setContentView(R.layout.activity_main)
 
+
         linearLayout  = findViewById<LinearLayout>(R.id.mainLayout)
-
-        viewModel.data.observe(this, Observer {
-
-            it.forEach { uiData->
-
-                linearLayout.addView(getView(uiData))
-
-            }
-
-        })
 
         viewModel.dataLoading.observe(this, Observer {
 
             findViewById<ProgressBar>(R.id.loadingButton).visibility = if(it) View.VISIBLE else View.GONE
 
         })
-
 
         viewModel.isDataLoadingError.observe(this, Observer {
 
@@ -65,13 +56,33 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        addViews()
+    }
+
+    private fun addViews() {
+
+        linearLayout.removeAllViews()
+
+        viewModel.data.observe(this, Observer {
+
+            it.forEach { uiData->
+
+                linearLayout.addView(getView(uiData))
+
+            }
+
+        })
+
+    }
 
     fun goToNextActivity(){
 
         linearLayout.removeAllViews()
         var intent = Intent(this, SecondActivity::class.java)
         startActivity(intent)
-        finish()
 
     }
 
