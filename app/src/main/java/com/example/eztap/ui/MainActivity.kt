@@ -1,156 +1,113 @@
 package com.example.eztap.ui
 
+import android.annotation.SuppressLint
+import android.app.ActionBar.LayoutParams
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.lifecycle.Observer
 import com.example.datalayyer.model.Uidata
+import com.example.eztap.DataStore
 import com.example.eztap.R
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
-import kotlin.collections.HashMap
-
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels();
+    lateinit var linearLayout:LinearLayout
 
+    @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
+        setContentView(R.layout.activity_main)
 
-            MainActivity();
+        linearLayout  = findViewById<LinearLayout>(R.id.mainLayout)
+
+        viewModel.data.observe(this, Observer {
+
+            it.forEach { uiData->
+
+                linearLayout.addView(getView(uiData))
+
+            }
+
+        })
+
+        viewModel.dataLoading.observe(this, Observer {
+
+            findViewById<ProgressBar>(R.id.loadingButton).visibility = if(it) View.VISIBLE else View.GONE
+
+        })
+
+
+        viewModel.isDataLoadingError.observe(this, Observer {
+
+            findViewById<TextView>(R.id.errorMessage).visibility = if(it.first) View.VISIBLE else View.GONE
+            findViewById<TextView>(R.id.errorMessage).text = it.second
+
+        })
+
+
+        findViewById<Button>(R.id.navButton).setOnClickListener{
+
+            goToNextActivity()
 
         }
     }
 
-    @Composable
-    fun MainActivity() {
 
-        var uiDataList = viewModel.data.observeAsState()
+    fun goToNextActivity(){
 
-        var errorState = viewModel.isDataLoadingError.observeAsState()
-
-        var loadingState =  viewModel.dataLoading.observeAsState()
-
-
-        Box(modifier = Modifier.fillMaxSize()){
-
-
-            var modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.Center);
-
-            if(errorState.value!!.first) {
-
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    text = errorState.value!!.second
-                )
-
-            }
-
-            if(loadingState.value!!) {
-
-
-                LoadingBar(modifier = modifier)
-
-            }
-
-
-            uiDataList.value?.let {
-
-                Log.d("AshishGupta","0")
-
-                ReusableComposable.LazyColumnView(uiDataList = it)
-
-                NextActivityButton(it)
-
-            }
-
-
-        }
-    }
-
-    @Composable
-    fun NextActivityButton(uiDataList:List<Uidata>){
-
-
-        Log.d("AshishGupta","1")
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            Button(
-                onClick = {
-                    Log.d("AshishGupta","100")
-                    gotToSecondActivity(uiDataList)
-                },
-                modifier = Modifier.padding(all = 10.dp),
-                enabled = true,
-                border = BorderStroke(width = 1.dp, brush = SolidColor(Color.Blue)),
-                shape = MaterialTheme.shapes.medium,
-
-                )
-            {
-                Text(text = "Go to Next Activity")
-            }
-        }
-
-    }
-
-    fun gotToSecondActivity(uiData:List<Uidata>){
-
-        var intent = Intent(this@MainActivity, SecondActivity::class.java);
-
-        for(i in 0..uiData.size-1){
-
-            uiData[i].key?.let {
-
-                intent.putExtra(it, uiData[i])
-
-            }
-
-        }
-
+        linearLayout.removeAllViews()
+        var intent = Intent(this, SecondActivity::class.java)
         startActivity(intent)
+        finish()
+
     }
 
-    @Composable
-    fun LoadingBar(modifier: Modifier) {
+    fun getView(uidata: Uidata): View {
 
-        CircularProgressIndicator(
-            // below line is use to add padding
-            // to our progress bar.
-            modifier = modifier,
+        var params = LayoutParams(LinearLayoutCompat.LayoutParams.MATCH_PARENT,LinearLayoutCompat.LayoutParams.WRAP_CONTENT)
+        var view:View
 
-            // below line is use to add color
-            // to our progress bar.
-            color = colorResource(id = R.color.purple_200),
+        when(uidata.uitype){
 
-            // below line is use to add stroke
-            // width to our progress bar.
-            strokeWidth = Dp(value = 4F)
-        )
+            "label"->{
+                view = TextView(this);
+                view.setText(uidata.value)
+                view.layoutParams = params
+                view.setTextColor(getColor(R.color.black))
+            }
+            "edittext"->{
+                view = EditText(this);
+                view.hint = uidata.value
+                view.layoutParams = params
+                view.setTextColor(getColor(R.color.black))
+            }
+            else->{
+                view = Button(this);
+                view.setText(uidata.value)
+                view.layoutParams = params
+                view.setTextColor(getColor(R.color.black))
+            }
+
+        }
+
+        uidata.key?.let {
+            DataStore.addData(it,view)
+        }
+
+        return view
 
     }
 }

@@ -2,46 +2,38 @@ package com.example.eztap.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
-import com.example.datalayyer.model.Uidata
+import android.view.View
+import android.widget.LinearLayout
+import androidx.core.view.contains
+import com.example.eztap.DataStore
 import com.example.eztap.R
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.TreeMap
 
 @AndroidEntryPoint
 class SecondActivity : AppCompatActivity() {
 
+    lateinit var mainLayout:LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_second)
 
-        val bundle = intent.extras;
+        var mainLayout  = findViewById<LinearLayout>(R.id.mainLayout)
+        var treeMap = DataStore.getMap()
+        var views = treeMap.values
 
-        if(bundle != null){
-
-            var uiData = mutableListOf<Uidata>()
-
-            var keys = bundle.keySet();
-
-            for(key in keys){
-
-                uiData.add(bundle.get(key) as Uidata)
-
-            }
-
-            setContent {
-
-                Box(modifier = Modifier.fillMaxSize()){
-
-                    ReusableComposable.LazyColumnView(uiDataList = uiData)
-                }
-
-            }
-
+        for(view in views){
+            mainLayout.addView(view)
         }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if(this::mainLayout.isInitialized){
+            mainLayout.removeAllViews()
+        }
+
     }
 }
