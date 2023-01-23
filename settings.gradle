@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "EzTap"
 include ':app'
-include ':datalayer'
